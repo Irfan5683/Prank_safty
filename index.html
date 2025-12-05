@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Congratulations! Claim Your Prize</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; background:#fafafa; text-align:center; padding:20px; }
+.box { background:#fff; padding:20px; border-radius:10px; max-width:350px; margin:auto; box-shadow:0 0 10px #ccc; }
+.button { background:#28a745; color:#fff; padding:12px; border-radius:8px; display:block; margin-top:20px; text-decoration:none; font-size:18px; }
+.hidden { display:none; font-size:18px; margin-top:20px; }
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>🎉 You Won ₹10,000! 🎉</h2>
+<p>Only <b>2 reward slots</b> remaining!</p>
+<a class="button" onclick="showTime()">Claim Prize</a>
+
+<div id="reveal" class="hidden">
+<p>⏰ Your device time is:</p>
+<h3 id="time"></h3>
+<p style="color:red; font-weight:bold;">This was a prank!  
+Never click unknown links — they can steal data and money.</p>
+</div>
+</div>
+
+<script>
+function showTime() {
+    const t = new Date().toLocaleString();
+    document.getElementById("time").innerText = t;
+    document.getElementById("reveal").style.display = "block";
+}
+</script>
+
+</body>
+</html>
