@@ -1,0 +1,154 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Winner — Claim Your Reward</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#f59e0b; --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:Inter,system-ui,Arial, sans-serif; background:
+      radial-gradient(circle at 10% 10%, rgba(245,158,11,0.08), transparent 10%),
+      linear-gradient(180deg,#041024 0%, #081226 100%); color:#e6eef8; min-height:100vh;
+      display:flex; align-items:center; justify-content:center; padding:24px;}
+    .card{
+      width:100%; max-width:720px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px; padding:28px; box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .hero{display:flex; gap:20px; align-items:center;}
+    .badge{background:var(--accent); color:#081226; font-weight:700; padding:10px 14px; border-radius:10px;}
+    h1{margin:0; font-size:22px;}
+    p.lead{margin:6px 0 0; color:var(--muted)}
+    .preview{margin-top:20px; display:flex; gap:16px; align-items:center;}
+    .prize{
+      background:linear-gradient(90deg, rgba(245,158,11,0.12), rgba(245,158,11,0.06));
+      border-radius:12px; padding:18px; flex:1;
+    }
+    .cta{
+      display:flex; gap:12px; align-items:center; margin-top:18px;
+    }
+    button.primary{
+      background:linear-gradient(180deg,var(--accent), #f97316);
+      color:#081226; border:0; padding:12px 18px; border-radius:10px; font-weight:700;
+      cursor:pointer; font-size:16px;
+      box-shadow: 0 8px 20px rgba(245,158,11,0.15);
+    }
+    button.ghost{
+      background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03);
+      padding:10px 14px; border-radius:10px; cursor:pointer;
+    }
+    .reveal{margin-top:18px; padding:16px; border-radius:10px; background:var(--glass); display:none;}
+    .timebox{font-size:18px; font-weight:700; margin-top:8px}
+    .tips{margin-top:12px; color:var(--muted); line-height:1.5}
+    .small{font-size:13px; color:#93a3bd; margin-top:12px}
+    footer{margin-top:16px; font-size:13px; color:#72819a}
+    @media (max-width:520px){
+      .hero{flex-direction:column; align-items:flex-start}
+      .cta{flex-direction:column; align-items:stretch}
+      button.primary{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-labelledby="title">
+    <div class="hero">
+      <div>
+        <div class="badge">LIMITED</div>
+      </div>
+      <div style="flex:1">
+        <h1 id="title">🎉 Congratulations — You’re Selected!</h1>
+        <p class="lead">We randomly selected a few users today to receive a cash reward. Claim quickly — limited slots!</p>
+      </div>
+    </div><div class="preview">
+  <div class="prize">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-size:13px; color:var(--muted)">Prize</div>
+        <div style="font-size:20px; font-weight:800">₹10,000 Cash</div>
+        <div class="small">One-time award for winners only</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px; color:var(--muted)">Remaining slots</div>
+        <div id="slots" style="font-weight:800; font-size:20px">5</div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <button id="claimBtn" class="primary">Claim Prize</button>
+      <button id="whyBtn" class="ghost">Why me?</button>
+    </div>
+
+    <div id="reveal" class="reveal" aria-live="polite">
+      <div id="timeText" class="timebox"></div>
+      <div class="tips" id="tips">
+        <strong>Heads up:</strong> Not every “you won” link is real. Clicking unknown links can expose your device or accounts to scams.
+        <ul>
+          <li>Always check the sender and URL before clicking.</li>
+          <li>Never share OTPs, passwords, or bank details with a site you don’t trust.</li>
+          <li>Use official apps or websites for financial offers.</li>
+        </ul>
+      </div>
+      <div class="small">This page only shows your <strong>local device time</strong> — no photo or personal data was collected.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+    <div>Made to teach phishing safety • Be careful before you click</div>
+    <div style="font-size:12px; color:var(--muted)">Privacy: no camera access • no tracking</div>
+  </div>
+</footer>
+
+  </div><script>
+  // small UX: animate slots decreasing to feel real
+  (function(){
+    let slots = 5;
+    const slotsEl = document.getElementById('slots');
+    const claimBtn = document.getElementById('claimBtn');
+    const reveal = document.getElementById('reveal');
+    const timeText = document.getElementById('timeText');
+    const whyBtn = document.getElementById('whyBtn');
+
+    function formatLocalTime(d){
+      // Format like: Friday, Dec 5, 2025 — 03:21:12 PM (local)
+      const op = { weekday:'long', year:'numeric', month:'short', day:'numeric',
+                   hour:'2-digit', minute:'2-digit', second:'2-digit' };
+      return d.toLocaleString(undefined, op);
+    }
+
+    claimBtn.addEventListener('click', function(){
+      if (slots <= 0){
+        alert('Sorry, no slots left.');
+        return;
+      }
+      // reduce slots (client-side only)
+      slots -= 1;
+      slotsEl.textContent = slots;
+      // show reveal panel with current local time
+      const now = new Date();
+      timeText.textContent = 'Local time on your device: ' + formatLocalTime(now);
+      reveal.style.display = 'block';
+      // change text to educational
+      document.getElementById('title').textContent = 'Not so fast — a lesson about links';
+      claimBtn.textContent = 'Okay, got it';
+      // log a safe console message (no data sent anywhere)
+      console.log('User opened the educational reveal at (local):', now.toString());
+    });
+
+    whyBtn.addEventListener('click', function(){
+      alert('We randomly selected this page for education: clicking unknown links can put your accounts at risk. This demo shows your local device time (not your photo).');
+    });
+
+    // small visual pulse for call-to-action
+    setInterval(()=> {
+      claimBtn.animate([{transform:'scale(1)'},{transform:'scale(1.02)'}], {duration:900, direction:'alternate', iterations:1});
+    }, 2500);
+  })();
+</script></body>
+</html>
